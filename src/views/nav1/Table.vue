@@ -1,49 +1,58 @@
 
 <template>
-	<el-form ref="userForm" :model="userForm" label-width="80px">
-		<el-form-item label="工号" prop="id">
-			<el-input class="input_width"
-					v-model="userForm.id"
-					:disabled="true">
-			</el-input>
-		</el-form-item>
-		<el-form-item label="姓名" prop="name">
-			<el-input class="input_width"
-					  v-model="userForm.name"
-					  :disabled="true">
-			</el-input>
-		</el-form-item>
-		<el-form-item label="年龄" prop="age">
-			<el-input class="input_width"
-					  v-model="userForm.age"
-					  :disabled="true">
-			</el-input>
-		</el-form-item>
-		<el-form-item label="邮箱" prop="email">
-			<el-input class="input_width"
-					  v-model="userForm.email"
-					  :disabled="true">
-			</el-input>
-		</el-form-item>
-		<el-form-item label="项目组" prop="organization.orgName">
-			<el-input class="input_width"
-					  v-model="userForm.organization.orgName"
-					  :disabled="true">
-			</el-input>
-		</el-form-item>
-		<el-form-item label="岗位名称" prop="post.postName">
-			<el-input class="input_width"
-					  v-model="userForm.post.postName"
-					  :disabled="true">
-			</el-input>
-		</el-form-item>
-		<el-form-item label="个人简介" prop="personalIntroduction">
-			<el-input class="input_width"
-					  v-model="userForm.personalIntroduction"
-					  :disabled="true">
-			</el-input>
-		</el-form-item>
-	</el-form>
+	<div style="margin-top: 2em">
+		<div class="demo-image__placeholder">
+			<div class="block" style="text-align: center;">
+				<i class="el-icon-s-custom"></i>
+				<span class="el-dropdown-link userinfo-inner"><img src="../../assets/user.png" /> </span>
+			</div>
+		</div>
+		<div style="text-align: center;margin-top: 1em;margin-bottom: 1em"><label>编辑个人信息</label><i class="el-icon-edit"></i></div>
+		<el-form ref="userForm" :model="userForm" label-width="43%">
+			<el-form-item  label="工号" prop="id">
+				<el-input class="input_width"
+						  v-model="userForm.id"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="姓名" prop="name">
+				<el-input class="input_width"
+						  v-model="userForm.name"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="年龄" prop="age">
+				<el-input class="input_width"
+						  v-model="userForm.age"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="邮箱" prop="email">
+				<el-input class="input_width"
+						  v-model="userForm.email"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="项目组" prop="organization.orgName">
+				<el-input class="input_width"
+						  v-model="userForm.organization.orgName"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="岗位名称" prop="post.postName">
+				<el-input class="input_width"
+						  v-model="userForm.post.postName"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+			<el-form-item label="个人简介" prop="personalIntroduction">
+				<el-input class="input_width"
+						  v-model="userForm.personalIntroduction"
+						  :disabled="true">
+				</el-input>
+			</el-form-item>
+		</el-form>
+	</div>
 </template>
 
 <script>
