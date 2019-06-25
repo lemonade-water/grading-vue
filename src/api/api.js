@@ -63,9 +63,9 @@ export const getUserListPage = params => { return axios.get(`${base}/user/getPer
 
 export const editUser = params => { return axios.post(`${base}/user/updateUser`, params); };
 
-export const batchRemoveUser = params => { return axios.get(`${base}/api/batchremove`, { params: params }); };
+export const getAllPost = params => { return axios.get(`${base}/post/getAllPost`,{ params: params }); };
 
-export const getAllPost = params => { return axios.get(`${base}/post/getAllPost`,params); };
+export const getRuleByPage = params => { return axios.get(`${base}/rule/getRuleByPage`,{ params: params }); };
 
 export const downGoods = params => { return axios.get(`${base}/api/downGoods`, { params: params }); };
 
@@ -76,8 +76,6 @@ export const upgoods = params => { return axios.get(`${base}/api/upgoods`, { par
 export const getAllgoods = params => { return axios.get(`${base}/api/goodsList`, { params: params }); };
 
 export const orderList = params => { return axios.get(`${base}/api/orderList`, { params: params }); };
-
-
 
 export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
 
