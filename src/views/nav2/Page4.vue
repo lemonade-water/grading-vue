@@ -2,50 +2,36 @@
   <section>
     <!--工具条-->
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-      <el-form :inline="true" :model="filters">
-        <el-form-item>
-          <el-input v-model="filters.goodsname" placeholder="商品名称"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" v-on:click="getAllgoods">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleAdd">新增</el-button>
-        </el-form-item>
-      </el-form>
+      <el-dropdown size="medium" split-button type="primary" >
+        {{defaultPost}}
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-for="post in posts" v-bind:id="post.postId">{{post.postName}}</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </el-col>
 
+    <!--
+                    ruleId:'',
+                    ruleIntroduction:'',
+                    ruleLevel:'',
+                    rulePost:'',
+                    ruleClass:''-->
     <!--列表-->
-    <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-      <el-table-column type="selection" width="55">
+    <el-table :data="rules" :span-method="objectSpanMethod"
+              highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+
+      <el-table-column type="index" width="100">
       </el-table-column>
-      <el-table-column type="index" width="60">
+      <el-table-column prop="ruleLevel" label="规则等级" v-show="false" width="350">
       </el-table-column>
-      <el-table-column prop="goodsid" label="商品名称" v-show="false" width="250"  sortable>
+      <el-table-column prop="ruleClass" label="规则类别" width="250">
       </el-table-column>
-      <el-table-column prop="goodsname" label="商品名称" width="250"  sortable>
-      </el-table-column>
-      <el-table-column prop="pop" label="人气" width="100" sortable>
-      </el-table-column>
-      <el-table-column prop="intro" label="简介" width="250" sortable>
-      </el-table-column>
-      <el-table-column prop="price" label="原价" width="120" sortable>
-      </el-table-column>
-      <el-table-column prop="secprice" label="价格" width="120" sortable>
-      </el-table-column>
-      <el-table-column prop="condition" label="新旧度" min-width="180" sortable>
-      </el-table-column>
-      <el-table-column label="操作" width="150">
-        <template scope="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">详情</el-button>
-          <el-button type="danger" size="small" @click="handleDel(scope.row.goodsid)">下架</el-button>
-        </template>
+      <el-table-column prop="ruleIntroduction" label="规则介绍" width="550">
       </el-table-column>
     </el-table>
 
     <!--工具条-->
     <el-col :span="24" class="toolbar">
-      <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
       <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
       </el-pagination>
     </el-col>
@@ -115,11 +101,28 @@
 <script>
     import util from '../../common/js/util'
     //import NProgress from 'nprogress'
-    import { getAllPost,getAllgoods, batchRemoveUser, editUser, addUser,downGoods } from '../../api/api';
+    import { getAllPost,getRuleByPage,getAllgoods, editUser, addUser,downGoods } from '../../api/api';
 
     export default {
         data() {
             return {
+                postForm:{
+                    postId:'',
+                    postName:'',
+                    postIntroduction:''
+                },
+                posts:[],
+                rules:[],
+                defaultPost:'',
+                defaultPostId:'',
+                rule:{
+                    ruleId:'',
+                    ruleIntroduction:'',
+                    ruleLevel:'',
+                    rulePost:'',
+                    ruleClass:''
+                },
+
                 filters: {
                     goodsname: ''
                 },
@@ -128,6 +131,8 @@
                 page: 1,
                 listLoading: false,
                 sels: [],//列表选中列
+
+
 
                 editFormVisible: false,//编辑界面是否显示
                 editLoading: false,
@@ -175,10 +180,42 @@
             },
             /*查询所有的岗位*/
             getAllPost(){
-                getAllPost().then((res) =>{
-
+                var param = {post:1};
+                getAllPost(param).then((res) =>{
+                    this.posts = res.data;
+                    this.defaultPost = this.posts[0].postName;
+                    this.defaultPostId = this.posts[0].postId;
                 });
             },
+            getRuleByPage(){
+
+                var params = {
+                    type: this.defaultPostId,
+                    page: this.page,
+                };
+                getRuleByPage(params).then((res)=>{
+                        this.rules=res.data.list;
+                })
+            },
+            objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+                if (columnIndex === 0) {
+                    if (rowIndex % 2 === 0) {
+                        return {
+                            rowspan: 2,
+                            colspan: 1
+                        };
+                    } else {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        };
+                    }
+                }
+            },
+
+
+
+
             //获取用户列表
             getAllgoods() {
                 let para = {
@@ -308,6 +345,7 @@
         },
         mounted() {
             this.getAllPost();
+            this.getRuleByPage();
         }
     }
 
