@@ -1,6 +1,7 @@
 import axios from 'axios';
 import NProgress from 'nprogress'
 import router from '../routes'
+
 //let base = 'http://192.168.42.175:8081/vueAdmin';
 //let base = 'http://192.168.43.243:8081/vueAdmin';
 //let base = 'http://localhost:8888/grading';
@@ -37,8 +38,17 @@ axios.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (error && error.response) {
-        sessionStorage.removeItem('user');
-        router.push('/login');
+        if(this.$route.path.includes("401")){
+            router.push('/login');
+        }
+        switch (error.response.status) {
+            case 400:router.push('/login');break;
+            case 404:error.message = "请求出错(404)";break;
+            case 500:error.message = '服务器出错（500），通知管理员';router.push('/login');break;
+            case 503:error.message = '服务器不可用，通知管理员';router.push('/login');break;
+            case 401:error.message =  '权限不足';break;
+            default: error.message = `连接出错(${error.response.status})!`;
+        }
     }
     NProgress.done();
     return Promise.reject(error);
@@ -51,7 +61,7 @@ export const getUserList = params => { return axios.get(`${base}/user/list`, { p
 
 export const getUserListPage = params => { return axios.get(`${base}/user/getPersonal`, { params: params }); };
 
-export const removeUser = params => { return axios.get(`${base}/api/remove`, { params: params }); };
+export const editUser = params => { return axios.post(`${base}/user/updateUser`, params); };
 
 export const batchRemoveUser = params => { return axios.get(`${base}/api/batchremove`, { params: params }); };
 
@@ -65,7 +75,7 @@ export const getAllgoods = params => { return axios.get(`${base}/api/goodsList`,
 
 export const orderList = params => { return axios.get(`${base}/api/orderList`, { params: params }); };
 
-export const editUser = params => { return axios.get(`${base}/user/edit`, { params: params }); };
+
 
 export const addUser = params => { return axios.get(`${base}/user/add`, { params: params }); };
 
