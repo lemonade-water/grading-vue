@@ -115,7 +115,7 @@
 <script>
     import util from '../../common/js/util'
     //import NProgress from 'nprogress'
-    import { getUserListPage,getAllgoods, removeUser, batchRemoveUser, editUser, addUser,downGoods } from '../../api/api';
+    import { getAllPost,getAllgoods, batchRemoveUser, editUser, addUser,downGoods } from '../../api/api';
 
     export default {
         data() {
@@ -172,6 +172,12 @@
             handleCurrentChange(val) {
                 this.page = val;
                 this.getAllgoods();
+            },
+            /*查询所有的岗位*/
+            getAllPost(){
+                getAllPost().then((res) =>{
+
+                });
             },
             //获取用户列表
             getAllgoods() {
@@ -301,7 +307,7 @@
             }
         },
         mounted() {
-            this.getAllgoods();
+            this.getAllPost();
         }
     }
 

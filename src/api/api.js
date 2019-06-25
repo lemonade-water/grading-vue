@@ -65,6 +65,8 @@ export const editUser = params => { return axios.post(`${base}/user/updateUser`,
 
 export const batchRemoveUser = params => { return axios.get(`${base}/api/batchremove`, { params: params }); };
 
+export const getAllPost = params => { return axios.get(`${base}/post/getAllPost`,params); };
+
 export const downGoods = params => { return axios.get(`${base}/api/downGoods`, { params: params }); };
 
 export const getSHgoods = params => { return axios.get(`${base}/api/getSHgoods`, { params: params }); };

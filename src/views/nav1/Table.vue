@@ -213,8 +213,9 @@
             editSubmit :function () {
 			    let param = this.editForm;
                 editUser(param).then((res)=>{
-
-                })
+                    this.editFormVisible = false;
+                });
+                this.getUsers();
             }
 		},
 		mounted() {
