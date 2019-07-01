@@ -76,7 +76,7 @@
 	export default {
 		data() {
 			return {
-				sysName:'南京擎天定岗系统',
+				sysName:'擎天定岗定级系统',
 				collapsed:false,
 				sysUserName: '11',
 				sysUserAvatar: '',

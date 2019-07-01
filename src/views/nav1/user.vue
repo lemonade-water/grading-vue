@@ -1,77 +1,102 @@
 <template>
-	<section>
-		<!--工具条-->
-		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-			<el-form :inline="true" :model="filters">
-				<el-form-item>
-					<el-input v-model="filters.name" placeholder="姓名"></el-input>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" v-on:click="getUser">查询</el-button>
-				</el-form-item>
-			</el-form>
-		</el-col>
-
-		<!--列表-->
-		<template>
-			<el-table :data="users" highlight-current-row v-loading="loading" style="width: 100%;">
-				<el-table-column type="index" width="60">
-				</el-table-column>
-				<el-table-column prop="name" label="姓名" width="120" sortable>
-				</el-table-column>
-				<el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
-				</el-table-column>
-				<el-table-column prop="age" label="年龄" width="100" sortable>
-				</el-table-column>
-				<el-table-column prop="birth" label="生日" width="120" sortable>
-				</el-table-column>
-				<el-table-column prop="addr" label="地址" min-width="180" sortable>
-				</el-table-column>
-			</el-table>
-		</template>
-
-	</section>
+	<div style="margin-top: 1em;margin-bottom: 5em;    margin-left: 30%;">
+		<el-form :model="editForm" label-width="70px" style="text-align:center;margin-top: 7em;" :rules="editFormRules">
+			<el-form-item label="原密码" class="input_width" prop="password">
+				<el-input v-model="editForm.password"  type="password" style="width: 256px;" auto-complete="off" clearable></el-input>
+			</el-form-item>
+			<el-form-item label="新密码" class="input_width" prop="newPassword">
+				<el-input v-model="editForm.newPassword" type="password" style="width: 256px;" class="input_width" clearable auto-complete="off"></el-input>
+			</el-form-item>
+			<el-form-item label="新密码" class="input_width" prop="newSecPassword">
+				<el-input v-model="editForm.newSecPassword" type="password" style="width: 256px;" clearable auto-complete="off"></el-input>
+			</el-form-item>
+			<el-button type="primary" @click="editSubmit" style="margin-right: 32%;">修改</el-button>
+		</el-form>
+	</div>
 </template>
 <script>
-	import { getUserList } from '../../api/api';
-	//import NProgress from 'nprogress'
-	export default {
-		data() {
-			return {
-				filters: {
-					name: ''
-				},
-				loading: false,
-				users: [
-				]
-			}
-		},
-		methods: {
-			//性别显示转换
-			formatSex: function (row, column) {
-				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
-			},
-			//获取用户列表
-			getUser: function () {
-				let para = {
-					name: this.filters.name
-				};
-				this.loading = true;
-				//NProgress.start();
-				getUserList(para).then((res) => {
-					this.users = res.data.users;
-					this.loading = false;
-					//NProgress.done();
-				});
-			}
-		},
-		mounted() {
-			this.getUser();
-		}
-	};
+    import { updatePassword } from '../../api/api';
+    //import NProgress from 'nprogress'
+    export default {
+        data() {
+            var validateNewSecPassword = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (this.editForm.newPassword !==this.editForm.newSecPassword) {
+                        callback(new Error('两次密码不相等'));
+                    }
+                    callback();
+                }
+            };
+            return {
+                editForm:{
+                    password:'',
+                    newPassword:'',
+                    newSecPassword:''
+                },
+                editFormRules: {
+
+                    password: [
+                        { required: true, message: '请输入原密码', trigger: 'blur' },
+
+                    ],
+                    newPassword: [
+                        { required: true, message: '请输入新密码', trigger: 'blur' },
+
+                    ],
+                    newSecPassword: [
+                        { required: true, message: '请输入新密码', trigger: 'blur' },
+                        { validator:validateNewSecPassword, trigger: "blur" }
+                    ]
+                },
+            }
+        },
+        methods: {
+
+            editSubmit:function () {
+                if (this.editForm.newPassword !==this.editForm.newSecPassword) {
+                    this.$message({
+                        message: '两次密码不一致',
+                        type: 'error'
+                    });
+                    return;
+                }else {
+                    let param = {password:this.editForm.password,newPassword:this.editForm.newSecPassword};
+                    updatePassword(param).then((res)=>{
+                        if(res.data.code===200){
+                            this.$message({
+                                message: '修改成功',
+                                type: 'success'
+                            });
+                            this.$router.push({ path: '/login' });
+                        }else{
+                            this.$message({
+                                message: res.data.msg,
+                                type: 'error'
+                            });
+                            this.editForm.password='';
+                            this.editForm.newPassword='';
+                            this.editForm.newSecPassword='';
+                        }
+                    })
+                }
+                this.editForm.password='';
+                this.editForm.newPassword='';
+                this.editForm.newSecPassword='';
+            }
+        },
+        mounted() {
+
+        }
+    };
 
 </script>
 
 <style scoped>
-
+	.input_width{
+		max-width: 300px;
+		border: none;
+		text-align: center;
+	}
 </style>

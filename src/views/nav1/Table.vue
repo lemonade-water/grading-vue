@@ -3,11 +3,11 @@
 	<div style="margin-top: 2em">
 		<div class="demo-image__placeholder">
 			<div class="block" style="text-align: center;">
-				<i class="el-icon-s-custom"></i>
+
 				<span class="el-dropdown-link userinfo-inner"><img src="../../assets/user.png" /> </span>
 			</div>
 		</div>
-		<div style="text-align: center;margin-top: 1em;margin-bottom: 1em" @click="showEditDialog()"><label>编辑个人信息</label><i class="el-icon-edit"></i></div>
+		<div style="text-align: center;margin-top: 1em;margin-bottom: 1em" v-on:click="showEditDialog()"><label>编辑个人信息</label><i class="el-icon-edit"></i></div>
 		<el-form ref="userForm" :model="userForm" label-width="43%">
 			<el-form-item  label="工号" prop="id">
 				<el-input class="input_width"
@@ -54,37 +54,40 @@
 		</el-form>
 
         <!--编辑弹出框-->
-        <el-dialog title="编辑" v-model="editFormVisible" :close-on-click-modal="false">
-            <el-form :model="editForm" label-width="80px" :rules="editFormRules">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="editForm.name" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="年龄" prop="age">
-                    <el-input v-model="editForm.age" type="number" min="0" max="150" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="editForm.email" type="email" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="个人简介" prop="personalIntroduction">
-                    <el-input v-model="editForm.personalIntroduction" auto-complete="off"></el-input>
-                </el-form-item>
+		<el-dialog
+				title="编辑"
+				:visible.sync="editFormVisible"
+				width="30%"
+				:before-close="handleClose">
+			<el-form :model="editForm" label-width="80px" :rules="editFormRules">
+				<el-form-item label="姓名" prop="name">
+					<el-input v-model="editForm.name" auto-complete="off" clearable></el-input>
+				</el-form-item>
+				<el-form-item label="年龄" prop="age">
+					<el-input v-model="editForm.age" type="number" min="0" max="150" auto-complete="off" clearable></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱" prop="email">
+					<el-input v-model="editForm.email" type="email" auto-complete="off" clearable></el-input>
+				</el-form-item>
+				<el-form-item label="个人简介" prop="personalIntroduction">
+					<el-input v-model="editForm.personalIntroduction" auto-complete="off" clearable></el-input>
+				</el-form-item>
+			</el-form>
 
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click.native="editFormVisible = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-            </div>
-        </el-dialog>
+			<span slot="footer" class="dialog-footer">
+				<el-button @click="editFormVisible = false">取 消</el-button>
+				<el-button type="primary" @click="editSubmit">确 定</el-button>
+  			</span>
+		</el-dialog>
 	</div>
 
 
 </template>
 
 <script>
-	import util from '../../common/js/util'
-	import { getUserListPage, editUser } from '../../api/api';
+    import {editUser, getUserListPage} from '../../api/api';
 
-	export default {
+    export default {
 		data() {
             var validateAge = (rule, value, callback) => {
                 if (value === '') {
@@ -108,6 +111,16 @@
                   callback();
               }
             };
+            var validateIntroduction = (rule,value,callback) =>{
+                if (value === '') {
+                    callback(new Error('请输入年龄'));
+                } else {
+                    if (value.length>100) {
+                        callback(new Error('不能超过100个字'));
+                    }
+                    callback();
+                }
+			};
 			return {
 
 				filters: {
@@ -151,7 +164,8 @@
                         { validator:validateEmail, trigger: "blur" }
                     ],
                     personalIntroduction: [
-                        { required: true, message: '请输入个人简介', trigger: 'blur' }
+                        { required: true, message: '请输入个人简介', trigger: 'blur' },
+                        { validator: validateIntroduction, trigger: 'blur' },
                     ]
 				},
 
@@ -203,6 +217,7 @@
 			},
 			//显示编辑界面
 			showEditDialog:function(){
+			    console.log("dianji");
                 this.editFormVisible = true;
                 this.editForm.name = this.userForm.name;
                 this.editForm.age = this.userForm.age;
@@ -216,6 +231,9 @@
                     this.editFormVisible = false;
                 });
                 this.getUsers();
+            },
+            handleClose:function () {
+                this.editFormVisible = false;
             }
 		},
 		mounted() {

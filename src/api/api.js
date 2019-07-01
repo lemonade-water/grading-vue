@@ -67,6 +67,10 @@ export const getAllPost = params => { return axios.get(`${base}/post/getAllPost`
 
 export const getRuleByPage = params => { return axios.get(`${base}/rule/getRuleByPage`,{ params: params }); };
 
+export const updatePassword = params => { return axios.post(`${base}/user/updatePassword`, params); };
+
+
+
 export const downGoods = params => { return axios.get(`${base}/api/downGoods`, { params: params }); };
 
 export const getSHgoods = params => { return axios.get(`${base}/api/getSHgoods`, { params: params }); };

@@ -47,28 +47,19 @@ let routes = [
         iconCls: 'fa fa-id-card-o',
         children: [
             { path: '/page4', component: Page4, name: '评分细则' },
-            { path: '/page8', component: Page8, name: '商品审核' },
-            { path: '/page5', component: Page5, name: '订单管理' }
+            { path: '/page8', component: Page8, name: '员工自评' },
+            { path: '/page5', component: Page5, name: '自评列表' }
         ]
     },
     {
         path: '/',
         component: Home,
-        name: '评论管理',
+        name: '员工复评',
         iconCls: 'fa fa-address-card',
         //leaf: true,//只有一个节点
         children: [
-            { path: '/page6', component: Page6, name: '评论详情' },
-            { path: '/page7', component: Page7, name: '敏感词汇' }
-        ]
-    },
-    {
-        path: '/',
-        component: Home,
-        name: '数据统计',
-        iconCls: 'fa fa-bar-chart',
-        children: [
-            { path: '/echarts', component: echarts, name: '数据统计' }
+            { path: '/page6', component: Page6, name: '员工复评' },
+            { path: '/page7', component: Page7, name: '复评列表' }
         ]
     },
     {

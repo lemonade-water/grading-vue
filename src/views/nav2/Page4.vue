@@ -2,10 +2,10 @@
   <section>
     <!--工具条-->
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-      <el-dropdown size="medium" split-button type="primary" >
+      <el-dropdown size="medium" split-button type="primary" @command="handleCommand">
         {{defaultPost}}
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-for="post in posts" v-bind:id="post.postId">{{post.postName}}</el-dropdown-item>
+          <el-dropdown-item v-for="post in posts" v-bind:command="post.postId">{{post.postName}}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </el-col>
@@ -17,7 +17,7 @@
                     rulePost:'',
                     ruleClass:''-->
     <!--列表-->
-    <el-table :data="rules" :span-method="objectSpanMethod"
+    <el-table :data="rules" :span-method="objectSpanMethod" border
               highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
 
       <el-table-column type="index" width="100">
@@ -122,6 +122,11 @@
                     rulePost:'',
                     ruleClass:''
                 },
+                rowList: [],
+                spanArr: [],
+                position: 0,
+
+
 
                 filters: {
                     goodsname: ''
@@ -178,6 +183,24 @@
                 this.page = val;
                 this.getAllgoods();
             },
+
+            rowspan() {
+                this.rules.forEach((item,index) => {
+                    if( index === 0){
+                        this.spanArr.push(1);
+                        this.position = 0;
+                    }else{
+                        if(item.ruleClass === this.rules[index-1].ruleClass ){
+                            this.spanArr[this.position] += 1;
+                            this.spanArr.push(0);
+                        }else{
+                            this.spanArr.push(1);
+                            this.position = index;
+                        }
+                    }
+                })
+            },
+
             /*查询所有的岗位*/
             getAllPost(){
                 var param = {post:1};
@@ -195,24 +218,42 @@
                 };
                 getRuleByPage(params).then((res)=>{
                         this.rules=res.data.list;
+                        this.rowspan();
+                }).catch(() =>{
+
                 })
             },
+            /*合并单元格*/
             objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-                if (columnIndex === 0) {
-                    if (rowIndex % 2 === 0) {
-                        return {
-                            rowspan: 2,
-                            colspan: 1
-                        };
-                    } else {
-                        return {
-                            rowspan: 0,
-                            colspan: 0
-                        };
+                if (columnIndex === 1) {
+                    const _row = this.spanArr[rowIndex];
+                         const _col = _row>0 ? 1 : 0;
+                         return {
+                                 rowspan: _row,
+                                 colspan: _col
+                         }
+                }
+                if (columnIndex === 2) {
+                    const _row = this.spanArr[rowIndex];
+                    const _col = _row>0 ? 1 : 0;
+                    return {
+                        rowspan: _row,
+                        colspan: _col
                     }
                 }
             },
-
+            handleCommand:function(command){
+                this.defaultPostId = command;
+                for(let i =0;i<this.posts.length;i++){
+                    if(this.posts[i].postId === command){
+                        this.defaultPost =this.posts[i].postName;
+                    }
+                }
+                this.getRuleByPage();
+                this.rowList=[],
+                this.spanArr=[],
+                this.position=0
+            },
 
 
 
